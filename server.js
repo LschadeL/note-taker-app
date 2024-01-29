@@ -35,3 +35,27 @@ app.get('/api/notes', (req, res) => {
     }
 });
 
+//Handlin the creation of new notes by assigning a unique ID and writing it to db.json
+app.post('/api/notes', (req, res) => {
+    try {
+        const newNote = req.body;
+        const data = fs.readFile(path.join(__dirname, 'Develop/db/db.json'), 'utf8');
+        const notes = JSON.parse(data);
+
+        newNote.id = Date.now();
+
+        notes.push(newNote);
+
+        fs.writeFile(path.join(__dirname, 'Develop/db/db.json'), JSON.stringify(notes));
+
+        res.json(newNote);
+    }
+    catch (error) {
+        res.status(500).json({error: 'Internal Server Error: Our bad!'});
+    }
+});
+
+//Port listening@
+app.listen(PORT, () => {
+    console.log(`Note-taker listening at http://localhost:${PORT}`);
+});

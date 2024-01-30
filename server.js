@@ -9,7 +9,7 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 //Middleware to parse JSON
-app.use(express.static('public'));
+app.use(express.static('Develop/public'));
 app.use(express.json());
 
 //Creating endpoint for index
@@ -25,12 +25,13 @@ app.get('/notes', (req, res) => {
 //handling server reading of db.json
 app.get('/api/notes', (req, res) => {
     try {
-        const data = fs.readFile(path.join(__dirname, 'Develop/db/db.json'), 'utf8');
+        const data = fs.readFileSync(path.join(__dirname, '/Develop/db/db.json'), 'utf8');
         const notes = JSON.parse(data);
         res.json(notes);
     }
     //If there is an error return a 500 Internal Server Error response
     catch (error) {
+        console.log(error);
         res.status(500).json({ error: 'Internal Server Error: Our bad!'});
     }
 });
@@ -39,14 +40,14 @@ app.get('/api/notes', (req, res) => {
 app.post('/api/notes', (req, res) => {
     try {
         const newNote = req.body;
-        const data = fs.readFile(path.join(__dirname, 'Develop/db/db.json'), 'utf8');
+        const data = fs.readFileSync(path.join(__dirname, 'Develop/db/db.json'), 'utf8');
         const notes = JSON.parse(data);
 
         newNote.id = Date.now();
 
         notes.push(newNote);
 
-        fs.writeFile(path.join(__dirname, 'Develop/db/db.json'), JSON.stringify(notes));
+        fs.writeFileSync(path.join(__dirname, 'Develop/db/db.json'), JSON.stringify(notes));
 
         res.json(newNote);
     }
